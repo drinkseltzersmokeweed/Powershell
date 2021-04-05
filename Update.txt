@@ -1,0 +1,32 @@
+Install-Module PSWindowsUpdate
+
+Get-Command -module PSWindowsUpdate
+
+Add-WUServiceManager -MicrosoftUpdate
+
+Invoke-WUInstall -ComputerName TRJWIN10-9 -Script {ipmo PSWindowsUpdate; Get-WUInstall -AcceptAll | Out-File C:\PSWindowsUpdate.log }
+-Confirm:$false –Verbose
+--------------------------------------------------------------------
+(For Computer you're running script on)
+
+Install-WindowsUpdateMicrosoftUpdate -AcceptAll -AutoReboot
+------------------------------OR------------------------------------
+(Create Variables)
+$Nodes = "computername01,computername02,etc"
+------------------------------OPTIONAL------------------------------
+(Optional Out-File)
+| Out-File "\\server\share\log$($env.computername-Get-Date -f yyyy-MM-dd)-MSUpdates.log" -Force
+
+--------------------------------------------------------------------
+
+import PSWindowsUpdate on remote system, then call on microsoft update to download and install any missing updates.
+Update will run immediately once the cmdlet is executed, exporting the output to the log file to a server share
+with the hostname and timestamp, as well as rebooting.
+
+Invoke-WUJob -ComputerName $Nodes -Script {ipmo PSWindowsUpdate; Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot} -RunNow -Confirm:$false | Out-File "\\server\share\logs\$Nodes-$(Get-Date -f yyy-MM-dd)-MSUpdates.log -Force
+
+For my domain
+
+$Nodes = "TRJWIN10-9"
+
+Invoke-WUJob -ComputerName $Nodes -Script {ipmo PSWindowsUpdate; Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot} -RunNow -Confirm:$false | Out-File "\\TRJDC\logs\$Nodes-$(Get-Date -f yyyy-MM-dd)-MSUpdates.log -Force
