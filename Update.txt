@@ -23,10 +23,10 @@ import PSWindowsUpdate on remote system, then call on microsoft update to downlo
 Update will run immediately once the cmdlet is executed, exporting the output to the log file to a server share
 with the hostname and timestamp, as well as rebooting.
 
-Invoke-WUJob -ComputerName $Nodes -Script {ipmo PSWindowsUpdate; Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot} -RunNow -Confirm:$false | Out-File "\\server\share\logs\$Nodes-$(Get-Date -f yyy-MM-dd)-MSUpdates.log -Force
+Invoke-WUJob -ComputerName $Nodes -Script {ipmo PSWindowsUpdate; Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot} -RunNow -Confirm:$false | Out-File "\\server\share\logs\$Nodes-$(Get-Date -f yyy-MM-dd)-MSUpdates.log" eAXdqs -Force
 
 For my domain
 
 $Nodes = "TRJWIN10-9"
 
-Invoke-WUJob -ComputerName $Nodes -Script {ipmo PSWindowsUpdate; Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot} -RunNow -Confirm:$false | Out-File "\\TRJDC\logs\$Nodes-$(Get-Date -f yyyy-MM-dd)-MSUpdates.log -Force
+Invoke-WUJob -ComputerName $Nodes -Script {ipmo PSWindowsUpdate; Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot} -RunNow -Confirm:$false | Out-File "\\TRJDC\logs\$Nodes-$(Get-Date -f yyyy-MM-dd)-MSUpdates.log" -Force
