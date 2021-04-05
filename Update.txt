@@ -9,7 +9,7 @@ Invoke-WUInstall -ComputerName TRJWIN10-9 -Script {ipmo PSWindowsUpdate; Get-WUI
 --------------------------------------------------------------------
 (For Computer you're running script on)
 
-Install-WindowsUpdateMicrosoftUpdate -AcceptAll -AutoReboot
+Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot
 ------------------------------OR------------------------------------
 (Create Variables)
 $Nodes = "computername01,computername02,etc"
