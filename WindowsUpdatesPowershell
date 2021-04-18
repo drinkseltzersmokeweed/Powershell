@@ -1,0 +1,46 @@
+(TRJWIN10-2 Is Remote PC to be updated)
+Firewall exception for local subnet for WinRM has been set(default disallows PCs on same subnet). Remote PC IS accessible through file explorer, pings, and dir \\TRJWIN10-2\c$
+Execution Policy, List of Trusted Hosts, Remote Registry and WinRM under services have all been enabled/set. 
+GPO for WinRM Service "Allow Remote server management through WinRM" enabled, disallowed negotiate authentication,
+GPO for Windows Defender Firewall "Allow local Port Exceptions" Has been enabled.
+
+*ON CLIENT/REMOTE PC AND PC RUNNING SCRIPT* (Some commands repeated/altered for differences between Server 2012R2 VS Server 2019)
+Invoke-WUInstall / Invoke-WUJob
+Install-Module PSWindowsUpdate / Import-Module PSWindowsUpdate 
+Add-WUServiceManager -MicrosoftUpdate
+Enable-PSRemoting
+Install-Module PSWindowsUpdate
+Get-Package -Name PSWindowsUpdate
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Unrestricted -Force
+winrm set winrm/config/client '@{TrustedHosts="TRJWIN10-2"}'
+
+*Now running on PC running script*
+Invoke-WUJob -ComputerName TRJWIN10-2 -Script {ipmo PSWindowsUpdate; Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot} -RunNow -Confirm:$false -Verbose
+*OR*
+Invoke-WUJob -ComputerName TRJWIN10-2 -Script {ipmo PSWindowsUpdate; Get-WUJob -AcceptAll -AutoReboot} -RunNow -Confirm:$false -Verbose
+*OR*
+Invoke-WUJob -ComputerName TRJWIN10-2 -Script {ipmo PSWindowsUpdate; Get-WindowsUpdate -Install -AcceptAll -AutoReboot} -RunNow -Confirm:$false -Verbose
+*Will produce this error:*
+VERBOSE: Performing the operation "(4/18/2021 11:47:41 AM) Invoke WU job: powershell.exe -Command "ipmo
+PSWindowsUpdate; Get-WUJob -AcceptAll -AutoReboot"" on target "TRJWIN10-2".
+VERBOSE: Try to connect TRJWIN10-2. Test 1
+VERBOSE: Try to connect TRJWIN10-2. Test 2
+VERBOSE: Try to connect TRJWIN10-2. Test 3
+VERBOSE: Registering task: PSWindowsUpdate
+VERBOSE: Starting task: PSWindowsUpdate
+Invoke-WUJob : The system cannot find the file specified. (Exception from HRESULT: 0x80070002)
+At line:1 char:1
++ Invoke-WUJob -ComputerName TRJWIN10-2 -Script {ipmo PSWindowsUpdate;  ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [Invoke-WUJob], FileNotFoundException
+    + FullyQualifiedErrorId : System.IO.FileNotFoundException,PSWindowsUpdate.InvokeWUJob
+
+
+*Now running on PC running script*
+Invoke-WUJob -ComputerName TRJWIN10-2 -Script {ipmo PSWindowsUpdate; Install-WindowsUpdate -MicrosoftUpdate -AcceptAll -AutoReboot} -RunNow -Confirm:$false -Verbose
+*Will ask for a*
+RunNow:
+*So I enter:*
+$true
+*Then will produce this error:*
+Invoke-WUJob : Cannot convert ‘System.String’ to the type ‘System.Management.Automation.SwitchParameter’ required by parameter ‘RunNow’.
